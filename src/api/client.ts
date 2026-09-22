@@ -53,6 +53,10 @@ export function parseApiErrorMessage(error: unknown): string {
     const responseData = axiosErr.response?.data;
 
     if (responseData) {
+      if (typeof responseData.error === 'object' && responseData.error !== null) {
+        const message = responseData.error.message || 'An API error occurred.';
+        return responseData.error.code ? `${responseData.error.code}: ${message}` : message;
+      }
       if (responseData.error && responseData.details) {
         return `${responseData.error}: ${responseData.details}`;
       }
