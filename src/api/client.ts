@@ -1,8 +1,20 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import { ApiErrorResponse } from '../types/api';
 
+declare global {
+  interface Window {
+    dockerDashboardDesktop?: {
+      apiBaseUrl?: string;
+      onOpenSettings?: (callback: () => void) => void;
+    };
+  }
+}
+
 const STORAGE_KEY_BASE_URL = 'docker_dashboard_api_base_url';
-export const DEFAULT_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://0.0.0.0:5000';
+export const DEFAULT_API_BASE_URL =
+  (typeof window !== 'undefined' && window.dockerDashboardDesktop?.apiBaseUrl) ||
+  import.meta.env.VITE_API_BASE_URL ||
+  'http://0.0.0.0:5000';
 
 export function getStoredApiBaseUrl(): string {
   try {

@@ -109,6 +109,12 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     checkConnection();
   }, [apiBaseUrl, checkConnection]);
 
+  useEffect(() => {
+    window.dockerDashboardDesktop?.onOpenSettings?.(() => {
+      setIsApiConfigModalOpen(true);
+    });
+  }, []);
+
   return (
     <ConfigContext.Provider
       value={{
