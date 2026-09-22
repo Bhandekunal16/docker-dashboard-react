@@ -47,9 +47,9 @@ export const QuickActions: React.FC = () => {
   ];
 
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="h-auto">
       {/* Compact Header */}
-      <div className="flex items-center gap-2.5 sm:gap-3 pb-3 sm:pb-4 border-b border-zinc-800/80 mb-3 sm:mb-4">
+      <div className="flex items-center gap-2.5 sm:gap-3 pb-3 sm:pb-3.5 border-b border-zinc-800/80 mb-3 sm:mb-4">
         <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
           <Zap className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
         </div>
@@ -64,7 +64,7 @@ export const QuickActions: React.FC = () => {
       </div>
 
       {/* Operations List: Single column on mobile (<640px), 1-col in sidebar widget on lg, 2-col on sm-md */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-2.5 flex-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-2.5">
         {actions.map((action, idx) => {
           const Icon = action.icon;
           return (

@@ -29,9 +29,9 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
   const imagesWithContainers = images.filter((img) => img.Containers > 0).length;
 
   return (
-    <Card className="flex flex-col h-full">
-      {/* 1. Compact Header */}
-      <div className="flex items-center gap-2.5 sm:gap-3 pb-3 sm:pb-4 border-b border-zinc-800/80 mb-3 sm:mb-4">
+    <Card className="h-auto">
+      {/* 1. Header */}
+      <div className="flex items-center gap-2.5 sm:gap-3 pb-3 sm:pb-3.5 border-b border-zinc-800/80 mb-3 sm:mb-4">
         <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
           <Activity className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
         </div>
@@ -45,7 +45,7 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
         </div>
       </div>
 
-      <div className="space-y-3.5 sm:space-y-5 flex-1 flex flex-col justify-between">
+      <div className="space-y-3.5 sm:space-y-4">
         {/* 2. Lifecycle Distribution */}
         <div>
           <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-[11px] sm:text-xs font-mono mb-2">
@@ -101,7 +101,7 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
         </div>
 
         {/* 3 & 4. Resource Summary Cards: Single-column on mobile (<640px), 2-col on desktop (sm/md/lg) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 pt-0.5">
           {/* Active Workloads */}
           <div className="p-2.5 sm:p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/80 flex items-center justify-between gap-3 select-none">
             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
