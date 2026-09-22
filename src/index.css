@@ -5,19 +5,273 @@
   --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Custom terminal scrollbars */
+/* =========================================================================
+   Centralized Design Tokens & Color Palettes for Dark and Light Modes
+   ========================================================================= */
+
+:root,
+[data-theme="dark"] {
+  --bg-page: #09090b; /* zinc-950 */
+  --bg-card: rgba(24, 24, 27, 0.7); /* zinc-900/70 */
+  --bg-card-solid: #18181b; /* zinc-900 */
+  --bg-card-hover: rgba(39, 39, 42, 0.6);
+  --bg-subtle: rgba(9, 9, 11, 0.6); /* zinc-950/60 */
+  --bg-secondary: #27272a; /* zinc-800 */
+  --bg-header: rgba(9, 9, 11, 0.8);
+  --bg-sidebar: #18181b; /* zinc-900 */
+
+  --text-primary: #f4f4f5; /* zinc-100 */
+  --text-secondary: #a1a1aa; /* zinc-400 */
+  --text-muted: #71717a; /* zinc-500 */
+  --text-inverse: #09090b;
+
+  --border-default: #27272a; /* zinc-800 */
+  --border-subtle: rgba(39, 39, 42, 0.6); /* zinc-800/60 */
+  --border-strong: #3f3f46; /* zinc-700 */
+
+  --input-bg: #09090b;
+  --input-border: #3f3f46;
+
+  --primary: #2563eb;
+  --primary-hover: #3b82f6;
+  --primary-light: rgba(37, 99, 235, 0.15);
+
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --success-border: rgba(16, 185, 129, 0.25);
+  --success-text: #34d399;
+
+  --danger: #f43f5e;
+  --danger-bg: rgba(244, 63, 94, 0.1);
+  --danger-border: rgba(244, 63, 94, 0.25);
+  --danger-text: #fb7185;
+
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --warning-border: rgba(245, 158, 11, 0.25);
+  --warning-text: #fbbf24;
+
+  --info: #0ea5e9;
+  --info-bg: rgba(14, 165, 233, 0.1);
+  --info-border: rgba(14, 165, 233, 0.25);
+  --info-text: #38bdf8;
+
+  --modal-backdrop: rgba(0, 0, 0, 0.75);
+  --scrollbar-track: rgba(24, 24, 27, 0.6);
+  --scrollbar-thumb: rgba(63, 63, 70, 0.8);
+  --scrollbar-thumb-hover: rgba(82, 82, 91, 1);
+}
+
+[data-theme="light"] {
+  --bg-page: #f8fafc; /* slate-50 / zinc-50 */
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card-solid: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-subtle: #f1f5f9;
+  --bg-secondary: #e2e8f0;
+  --bg-header: rgba(255, 255, 255, 0.85);
+  --bg-sidebar: #ffffff;
+
+  --text-primary: #0f172a; /* slate-900 */
+  --text-secondary: #475569; /* slate-600 */
+  --text-muted: #64748b; /* slate-500 */
+  --text-inverse: #ffffff;
+
+  --border-default: #e2e8f0; /* slate-200 */
+  --border-subtle: #edf2f7;
+  --border-strong: #cbd5e1; /* slate-300 */
+
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: rgba(37, 99, 235, 0.1);
+
+  --success: #059669;
+  --success-bg: #ecfdf5;
+  --success-border: #a7f3d0;
+  --success-text: #047857;
+
+  --danger: #e11d48;
+  --danger-bg: #fff1f2;
+  --danger-border: #fecdd3;
+  --danger-text: #be123c;
+
+  --warning: #d97706;
+  --warning-bg: #fffbeb;
+  --warning-border: #fde68a;
+  --warning-text: #b45309;
+
+  --info: #0284c7;
+  --info-bg: #f0f9ff;
+  --info-border: #bae6fd;
+  --info-text: #0369a1;
+
+  --modal-backdrop: rgba(15, 23, 42, 0.4);
+  --scrollbar-track: rgba(241, 245, 249, 0.8);
+  --scrollbar-thumb: rgba(203, 213, 225, 0.9);
+  --scrollbar-thumb-hover: rgba(148, 163, 184, 1);
+}
+
+/* =========================================================================
+   Smooth Theme Transitions (150-200ms) for background, border & colors
+   ========================================================================= */
+body {
+  transition: background-color 180ms ease, color 180ms ease;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+}
+
+/* Global scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(24, 24, 27, 0.6);
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(63, 63, 70, 0.8);
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(82, 82, 91, 1);
+  background: var(--scrollbar-thumb-hover);
 }
 
+/* Theme overrides for light mode with high precision */
+[data-theme="light"] .bg-zinc-950,
+[data-theme="light"] .bg-zinc-950\/80,
+[data-theme="light"] .bg-zinc-950\/60,
+[data-theme="light"] .bg-zinc-950\/40,
+[data-theme="light"] .bg-zinc-950\/90 {
+  background-color: #f1f5f9;
+}
+
+[data-theme="light"] header.bg-zinc-950\/80 {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="light"] .bg-zinc-900,
+[data-theme="light"] .bg-zinc-900\/70,
+[data-theme="light"] .bg-zinc-900\/60,
+[data-theme="light"] .bg-zinc-900\/50,
+[data-theme="light"] .bg-zinc-900\/40,
+[data-theme="light"] .bg-zinc-900\/30 {
+  background-color: #ffffff;
+}
+
+[data-theme="light"] .bg-zinc-850,
+[data-theme="light"] .bg-zinc-850\/80,
+[data-theme="light"] .bg-zinc-850\/70,
+[data-theme="light"] .bg-zinc-800,
+[data-theme="light"] .bg-zinc-800\/80,
+[data-theme="light"] .bg-zinc-800\/70,
+[data-theme="light"] .bg-zinc-800\/60,
+[data-theme="light"] .bg-zinc-800\/50,
+[data-theme="light"] .bg-zinc-800\/40,
+[data-theme="light"] .bg-zinc-800\/30 {
+  background-color: #f1f5f9;
+}
+
+[data-theme="light"] .hover\:bg-zinc-800:hover,
+[data-theme="light"] .hover\:bg-zinc-800\/80:hover,
+[data-theme="light"] .hover\:bg-zinc-800\/60:hover,
+[data-theme="light"] .hover\:bg-zinc-800\/50:hover,
+[data-theme="light"] .hover\:bg-zinc-800\/40:hover,
+[data-theme="light"] .hover\:bg-zinc-800\/30:hover,
+[data-theme="light"] .hover\:bg-zinc-850\/70:hover,
+[data-theme="light"] .hover\:bg-zinc-900\/90:hover,
+[data-theme="light"] .hover\:bg-zinc-950\/80:hover {
+  background-color: #e2e8f0;
+}
+
+/* Borders in light mode */
+[data-theme="light"] .border-zinc-800,
+[data-theme="light"] .border-zinc-800\/80,
+[data-theme="light"] .border-zinc-800\/70,
+[data-theme="light"] .border-zinc-800\/60,
+[data-theme="light"] .border-zinc-800\/50,
+[data-theme="light"] .border-zinc-800\/40,
+[data-theme="light"] .border-zinc-750,
+[data-theme="light"] .border-zinc-700,
+[data-theme="light"] .border-zinc-700\/80,
+[data-theme="light"] .border-zinc-700\/70,
+[data-theme="light"] .border-zinc-700\/60,
+[data-theme="light"] .border-zinc-700\/50 {
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .divide-zinc-800\/40 > :not([hidden]) ~ :not([hidden]),
+[data-theme="light"] .divide-zinc-800\/50 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e2e8f0;
+}
+
+/* Typography in light mode */
+[data-theme="light"] .text-zinc-100,
+[data-theme="light"] .text-zinc-200 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .text-zinc-300,
+[data-theme="light"] .text-zinc-400 {
+  color: #475569;
+}
+
+[data-theme="light"] .text-zinc-500,
+[data-theme="light"] .text-zinc-600 {
+  color: #64748b;
+}
+
+[data-theme="light"] .hover\:text-zinc-100:hover,
+[data-theme="light"] .hover\:text-zinc-200:hover,
+[data-theme="light"] .group-hover\:text-white:hover {
+  color: #0f172a;
+}
+
+[data-theme="light"] .placeholder\:text-zinc-500::placeholder,
+[data-theme="light"] .placeholder\:text-zinc-600::placeholder {
+  color: #94a3b8;
+}
+
+/* Semantic Badges in light mode */
+[data-theme="light"] .bg-emerald-950,
+[data-theme="light"] .bg-emerald-950\/70,
+[data-theme="light"] .bg-emerald-950\/40 {
+  background-color: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+[data-theme="light"] .bg-rose-950,
+[data-theme="light"] .bg-rose-950\/80,
+[data-theme="light"] .bg-rose-950\/60,
+[data-theme="light"] .bg-rose-950\/40,
+[data-theme="light"] .bg-rose-950\/20 {
+  background-color: #fff1f2;
+  color: #be123c;
+  border-color: #fecdd3;
+}
+
+[data-theme="light"] .bg-blue-950,
+[data-theme="light"] .bg-blue-950\/80,
+[data-theme="light"] .bg-blue-950\/70,
+[data-theme="light"] .bg-blue-950\/60,
+[data-theme="light"] .bg-blue-950\/20 {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+[data-theme="light"] .bg-amber-950,
+[data-theme="light"] .bg-amber-950\/70,
+[data-theme="light"] .bg-amber-950\/40 {
+  background-color: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+/* Modal shadows & backgrounds */
+[data-theme="light"] .shadow-2xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Server, CheckCircle2, AlertCircle, RotateCcw, Activity } from 'lucide-react';
+import { X, Server, CheckCircle2, AlertCircle, RotateCcw, Activity, Settings, Palette } from 'lucide-react';
 import { Button } from '../common/Button';
+import { ThemeSelector } from '../common/ThemeSelector';
 import { useConfig } from '../../context/ConfigContext';
 import { DEFAULT_API_BASE_URL } from '../../api/client';
 import axios from 'axios';
@@ -84,19 +85,37 @@ export const ApiConfigModal: React.FC = () => {
 
         <div className="flex items-center gap-3 pb-4 border-b border-zinc-800">
           <div className="p-2.5 rounded-lg bg-blue-950/80 text-blue-400 border border-blue-800/60">
-            <Server className="w-5 h-5" />
+            <Settings className="w-5 h-5" />
           </div>
           <div>
             <h3 id="api-config-title" className="text-base font-semibold text-zinc-100">
-              API Connection Settings
+              Dashboard Settings
             </h3>
             <p className="text-xs text-zinc-400">
-              Configure the Docker REST API backend target URL
+              Manage appearance, theme mode, and Docker REST API connection
             </p>
           </div>
         </div>
 
         <div className="mt-5 space-y-4">
+          {/* Theme Mode Selector */}
+          <div className="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-2.5">
+                <Palette className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-200">
+                    Interface Theme
+                  </label>
+                  <p className="text-[11px] text-zinc-400">
+                    Choose between Dark, Light, or follow System OS preference
+                  </p>
+                </div>
+              </div>
+              <ThemeSelector />
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs font-medium text-zinc-300 mb-1.5">
               Backend Base URL
