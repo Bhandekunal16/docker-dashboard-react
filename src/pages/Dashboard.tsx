@@ -62,9 +62,9 @@ export const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Top Stat Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Top Stat Cards Grid: 1 col (320px-399px), 2 cols (400px-639px / sm), 4 cols (1024px+ / lg) */}
+      <div className="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {isLoading ? (
           <>
             <StatCardSkeleton />
@@ -78,7 +78,7 @@ export const Dashboard: React.FC = () => {
               title="Total Containers"
               value={totalContainers}
               subtitle="All registered containers"
-              icon={<Box className="w-6 h-6" />}
+              icon={<Box className="w-5 h-5 sm:w-6 sm:h-6" />}
               variant="blue"
               onClick={() => navigate('/containers')}
             />
@@ -86,7 +86,7 @@ export const Dashboard: React.FC = () => {
               title="Running Containers"
               value={runningContainers}
               subtitle="Active & responding"
-              icon={<Play className="w-6 h-6" />}
+              icon={<Play className="w-5 h-5 sm:w-6 sm:h-6" />}
               variant="emerald"
               onClick={() => navigate('/containers')}
             />
@@ -94,7 +94,7 @@ export const Dashboard: React.FC = () => {
               title="Stopped Containers"
               value={stoppedContainers}
               subtitle="Exited or idle"
-              icon={<Square className="w-6 h-6" />}
+              icon={<Square className="w-5 h-5 sm:w-6 sm:h-6" />}
               variant="zinc"
               onClick={() => navigate('/containers')}
             />
@@ -102,7 +102,7 @@ export const Dashboard: React.FC = () => {
               title="Docker Images"
               value={totalImages}
               subtitle="Cached repository tags"
-              icon={<Package className="w-6 h-6" />}
+              icon={<Package className="w-5 h-5 sm:w-6 sm:h-6" />}
               variant="amber"
               onClick={() => navigate('/images')}
             />
@@ -111,7 +111,7 @@ export const Dashboard: React.FC = () => {
       </div>
 
       {/* Middle Row: Status Distribution & Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="lg:col-span-2">
           {isLoading ? (
             <TableSkeleton rows={3} columns={3} />

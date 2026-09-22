@@ -2,13 +2,15 @@ import React from 'react';
 
 export const StatCardSkeleton: React.FC = () => {
   return (
-    <div className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-5 animate-pulse">
-      <div className="flex items-center justify-between">
-        <div className="w-24 h-4 bg-zinc-800 rounded" />
-        <div className="w-8 h-8 bg-zinc-800 rounded-lg" />
+    <div className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-3 sm:p-5 animate-pulse">
+      <div className="flex items-center sm:items-start justify-between">
+        <div className="flex-1">
+          <div className="w-20 sm:w-24 h-3 sm:h-4 bg-zinc-800 rounded" />
+          <div className="mt-1.5 sm:mt-2 w-12 sm:w-16 h-6 sm:h-8 bg-zinc-800 rounded" />
+        </div>
+        <div className="w-7 h-7 sm:w-10 sm:h-10 bg-zinc-800 rounded-lg shrink-0" />
       </div>
-      <div className="mt-4 w-16 h-8 bg-zinc-800 rounded" />
-      <div className="mt-2 w-32 h-3 bg-zinc-800/60 rounded" />
+      <div className="hidden sm:block mt-3.5 w-32 h-3 bg-zinc-800/60 rounded" />
     </div>
   );
 };

@@ -10,7 +10,7 @@ export const Card: React.FC<CardProps> = ({ children, className = '', id }) => {
   return (
     <div
       id={id}
-      className={`bg-zinc-900/70 border border-zinc-800 rounded-xl p-5 backdrop-blur-xs shadow-xs ${className}`}
+      className={`bg-zinc-900/70 border border-zinc-800 rounded-xl p-3.5 sm:p-5 backdrop-blur-xs shadow-xs ${className}`}
     >
       {children}
     </div>
