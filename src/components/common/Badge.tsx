@@ -61,14 +61,14 @@ export const TagBadge: React.FC<{ tag: string; className?: string; maxWidth?: st
 
     return (
       <div
-        className={`inline-flex items-center gap-1 font-mono text-[11px] ${className}`}
+        className={`inline-flex items-center gap-1.5 font-mono text-[11px] ${className}`}
         title={tag}
       >
         <span className={`text-zinc-200 truncate ${maxWidth}`} title={repo}>
           {repo}
         </span>
-        <span className="text-[10px] text-zinc-400 bg-zinc-800/80 px-1 py-0.2 rounded border border-zinc-700/60 shrink-0">
-          :{version}
+        <span className="text-[10px] font-mono text-zinc-400 bg-zinc-800/80 px-1.5 py-0.5 rounded border border-zinc-700/60 shrink-0 font-medium">
+          {version}
         </span>
       </div>
     );
