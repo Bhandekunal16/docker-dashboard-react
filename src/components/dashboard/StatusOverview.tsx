@@ -4,6 +4,7 @@ import { Activity, CheckCircle2, Layers } from 'lucide-react';
 import { Container } from '../../types/container';
 import { DockerImage } from '../../types/image';
 import { parseContainerStatus } from '../../utils/formatters';
+import { ResourceTrendsChart } from './ResourceTrendsChart';
 
 interface StatusOverviewProps {
   containers: Container[];
@@ -40,20 +41,23 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
             Host Resources Overview
           </h3>
           <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 leading-tight truncate">
-            Distribution of active containers, lifecycle states, and cached Docker images
+            Real-time CPU and memory telemetry, lifecycle distribution, and cached Docker images
           </p>
         </div>
       </div>
 
       <div className="space-y-3.5">
-        {/* 2. Lifecycle Distribution */}
-        <div>
+        {/* 2. D3 Real-Time Resource Trends Chart (30m CPU & Memory) */}
+        <ResourceTrendsChart runningContainersCount={runningContainers} />
+
+        {/* 3. Lifecycle Distribution */}
+        <div className="pt-1">
           <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-[11px] font-mono mb-1.5">
             <span className="text-zinc-300 font-medium">Container Lifecycle Distribution</span>
             <span className="text-zinc-400">{totalContainers} Total</span>
           </div>
 
-          {/* Progress Bar (8-10px tall) */}
+          {/* Progress Bar (8px tall) */}
           <div className="h-2 w-full bg-zinc-800/80 rounded-full overflow-hidden flex">
             {runningPct > 0 && (
               <div
@@ -100,8 +104,8 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
           </div>
         </div>
 
-        {/* 3 & 4. Resource Summary Cards: Compact, refined summary style */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+        {/* 4. Resource Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-0.5">
           {/* Active Workloads */}
           <div className="p-2.5 sm:p-3 rounded-lg bg-zinc-950/40 border border-zinc-800/60 flex items-center justify-between gap-3 select-none">
             <div className="flex items-center gap-2.5 min-w-0">
