@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardHeader } from '../common/Card';
-import { Box, Package, RefreshCw, Server, Zap, ArrowRight } from 'lucide-react';
+import { Card } from '../common/Card';
+import { Box, Package, RefreshCw, Server, Zap, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useConfig } from '../../context/ConfigContext';
 import { useQueryClient } from '@tanstack/react-query';
@@ -20,63 +20,80 @@ export const QuickActions: React.FC = () => {
       title: 'Inspect Containers',
       description: 'View active ports, start, stop, or view container live logs',
       icon: Box,
-      variant: 'emerald',
+      iconColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
       onClick: () => navigate('/containers'),
     },
     {
       title: 'Manage Images',
       description: 'Review Docker images, clean up unused tags and layers',
       icon: Package,
-      variant: 'blue',
+      iconColor: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
       onClick: () => navigate('/images'),
     },
     {
       title: 'Reload Docker Host',
       description: 'Refresh container states and image catalogs immediately',
       icon: RefreshCw,
-      variant: 'zinc',
+      iconColor: 'text-zinc-300 bg-zinc-800/80 border-zinc-700/60',
       onClick: handleRefresh,
     },
     {
       title: 'API Settings',
       description: 'Configure endpoint base URL or test server connectivity',
       icon: Server,
-      variant: 'amber',
+      iconColor: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
       onClick: () => setIsApiConfigModalOpen(true),
     },
   ];
 
   return (
-    <Card>
-      <CardHeader
-        title="Quick Operations"
-        subtitle="Common management tasks and navigation shortcuts"
-        icon={<Zap className="w-5 h-5 text-amber-400" />}
-      />
+    <Card className="flex flex-col h-full">
+      {/* Compact Header */}
+      <div className="flex items-center gap-2.5 sm:gap-3 pb-3 sm:pb-4 border-b border-zinc-800/80 mb-3 sm:mb-4">
+        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+          <Zap className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+        </div>
+        <div className="min-w-0">
+          <h3 className="text-sm sm:text-base font-semibold text-zinc-100 leading-snug truncate">
+            Quick Operations
+          </h3>
+          <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 leading-tight truncate">
+            Common management tasks and navigation shortcuts
+          </p>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {/* Operations List: Single column on mobile (<640px), 1-col in sidebar widget on lg, 2-col on sm-md */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-2.5 flex-1">
         {actions.map((action, idx) => {
           const Icon = action.icon;
           return (
             <div
               key={idx}
               onClick={action.onClick}
-              className="p-3.5 rounded-lg bg-zinc-950/60 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-850/80 transition-all cursor-pointer group flex items-start justify-between gap-3"
+              className="p-2.5 sm:p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-850/70 active:bg-zinc-800/80 transition-all cursor-pointer group flex items-center justify-between gap-2.5 sm:gap-3 select-none"
             >
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-zinc-900 border border-zinc-700/60 text-zinc-300 group-hover:text-blue-400 transition-colors shrink-0">
-                  <Icon className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-semibold text-zinc-200 group-hover:text-white transition-colors">
-                    {action.title}
-                  </h4>
-                  <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
-                    {action.description}
-                  </p>
-                </div>
+              {/* Left Fixed Icon */}
+              <div
+                className={`w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-lg border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${action.iconColor}`}
+              >
+                <Icon className="w-4 h-4" />
               </div>
-              <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-200 group-hover:translate-x-0.5 transition-all shrink-0 mt-1" />
+
+              {/* Middle Title & Description */}
+              <div className="flex-1 min-w-0">
+                <h4 className="text-xs sm:text-[13px] font-medium text-zinc-200 group-hover:text-white transition-colors leading-tight">
+                  {action.title}
+                </h4>
+                <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug line-clamp-2">
+                  {action.description}
+                </p>
+              </div>
+
+              {/* Far-Right Arrow */}
+              <div className="shrink-0 text-zinc-500 group-hover:text-zinc-200 group-hover:translate-x-0.5 transition-all pl-1">
+                <ChevronRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+              </div>
             </div>
           );
         })}

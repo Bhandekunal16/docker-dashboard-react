@@ -33,18 +33,18 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
       <CardHeader
         title="Host Resources Overview"
         subtitle="Distribution of active containers, paused states, and cached Docker images"
-        icon={<Activity className="w-5 h-5" />}
+        icon={<Activity className="w-4 h-4 sm:w-5 sm:h-5" />}
       />
 
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Progress Bar of Container States */}
         <div>
-          <div className="flex items-center justify-between text-xs text-zinc-300 font-mono mb-2">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-zinc-300 font-mono mb-2">
             <span>Container Lifecycle Distribution</span>
             <span>{totalContainers} Total</span>
           </div>
 
-          <div className="h-3 w-full bg-zinc-800 rounded-full overflow-hidden flex">
+          <div className="h-2.5 sm:h-3 w-full bg-zinc-800 rounded-full overflow-hidden flex">
             {runningPct > 0 && (
               <div
                 style={{ width: `${runningPct}%` }}
@@ -71,18 +71,18 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
             )}
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-mono text-zinc-400">
+          <div className="mt-2.5 sm:mt-3 flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-mono text-zinc-400">
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
               <span>Running: {runningContainers}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-zinc-600" />
+              <span className="w-2 h-2 rounded-full bg-zinc-600" />
               <span>Stopped: {stoppedContainers}</span>
             </div>
             {otherContainers > 0 && (
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
+                <span className="w-2 h-2 rounded-full bg-sky-500" />
                 <span>Other: {otherContainers}</span>
               </div>
             )}
@@ -90,34 +90,34 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
         </div>
 
         {/* Quick summary grids */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-          <div className="p-3.5 rounded-lg bg-zinc-950/60 border border-zinc-800 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-950/70 text-emerald-400 border border-emerald-800/60">
-                <CheckCircle2 className="w-4 h-4" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-1 sm:pt-2">
+          <div className="p-2.5 sm:p-3.5 rounded-lg bg-zinc-950/60 border border-zinc-800 flex items-center justify-between">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div className="p-1.5 sm:p-2 rounded-lg bg-emerald-950/70 text-emerald-400 border border-emerald-800/60 shrink-0">
+                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
-              <div>
-                <div className="text-xs font-semibold text-zinc-200">Active Workloads</div>
-                <div className="text-[11px] text-zinc-400">Currently serving traffic</div>
+              <div className="min-w-0">
+                <div className="text-xs font-medium text-zinc-200 truncate">Active Workloads</div>
+                <div className="text-[10px] sm:text-[11px] text-zinc-400 truncate">Currently serving traffic</div>
               </div>
             </div>
-            <div className="text-lg font-bold font-mono text-emerald-400">
+            <div className="text-base sm:text-lg font-bold font-mono text-emerald-400 shrink-0 ml-2">
               {runningContainers}
             </div>
           </div>
 
-          <div className="p-3.5 rounded-lg bg-zinc-950/60 border border-zinc-800 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-950/70 text-blue-400 border border-blue-800/60">
-                <Layers className="w-4 h-4" />
+          <div className="p-2.5 sm:p-3.5 rounded-lg bg-zinc-950/60 border border-zinc-800 flex items-center justify-between">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div className="p-1.5 sm:p-2 rounded-lg bg-blue-950/70 text-blue-400 border border-blue-800/60 shrink-0">
+                <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
-              <div>
-                <div className="text-xs font-semibold text-zinc-200">Images In Use</div>
-                <div className="text-[11px] text-zinc-400">Referenced by containers</div>
+              <div className="min-w-0">
+                <div className="text-xs font-medium text-zinc-200 truncate">Images In Use</div>
+                <div className="text-[10px] sm:text-[11px] text-zinc-400 truncate">Referenced by containers</div>
               </div>
             </div>
-            <div className="text-lg font-bold font-mono text-blue-400">
-              {imagesWithContainers} <span className="text-xs text-zinc-500">/ {totalImageCount}</span>
+            <div className="text-base sm:text-lg font-bold font-mono text-blue-400 shrink-0 ml-2">
+              {imagesWithContainers} <span className="text-[10px] sm:text-xs text-zinc-500">/ {totalImageCount}</span>
             </div>
           </div>
         </div>
