@@ -90,23 +90,15 @@ export const RecentContainers: React.FC<{ containers: Container[]; isLoading?: b
           onAction={() => navigate('/containers')}
         />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[760px]">
-            {/* Optimized column proportions: ID min 110px, Name min 160px, Image min 200px, Status min 140px, Actions min 145px */}
-            <colgroup>
-              <col className="w-[14%] min-w-[110px]" />
-              <col className="w-[25%] min-w-[150px]" />
-              <col className="w-[27%] min-w-[180px]" />
-              <col className="w-[18%] min-w-[130px]" />
-              <col className="w-[16%] min-w-[150px]" />
-            </colgroup>
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left border-collapse min-w-[700px] table-auto">
             <thead className="text-[10px] sm:text-[11px] uppercase tracking-wider text-zinc-400 font-mono border-b border-zinc-800 bg-zinc-950/40 select-none">
               <tr className="h-9">
-                <th className="py-2 pl-3 pr-2 font-medium">Container ID</th>
-                <th className="py-2 px-2.5 font-medium">Name</th>
-                <th className="py-2 px-2.5 font-medium">Image</th>
-                <th className="py-2 px-2.5 font-medium">Status</th>
-                <th className="py-2 pl-2 pr-3 font-medium text-right">Actions</th>
+                <th className="py-2 pl-3 pr-2 font-medium w-28">Container ID</th>
+                <th className="py-2 px-3 font-medium">Name</th>
+                <th className="py-2 px-3 font-medium">Image</th>
+                <th className="py-2 px-3 font-medium w-36">Status</th>
+                <th className="py-2 pl-3 pr-4 font-medium text-right w-44">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/40">
@@ -125,7 +117,7 @@ export const RecentContainers: React.FC<{ containers: Container[]; isLoading?: b
                     className="h-13 hover:bg-zinc-800/30 transition-colors group text-xs align-middle"
                   >
                     {/* 1. Container ID */}
-                    <td className="py-2.5 pl-3 pr-2 text-zinc-400 font-mono text-[11px] whitespace-nowrap align-middle">
+                    <td className="py-2.5 pl-3 pr-2 text-zinc-400 font-mono text-[11px] whitespace-nowrap align-middle w-28">
                       <div className="inline-flex items-center gap-1.5 group/id">
                         <span>{getShortId(container.container_id)}</span>
                         <button
@@ -144,25 +136,25 @@ export const RecentContainers: React.FC<{ containers: Container[]; isLoading?: b
                     </td>
 
                     {/* 2. Container Name */}
-                    <td className="py-2.5 px-2.5 font-medium text-zinc-100 text-xs sm:text-[13px] truncate whitespace-nowrap align-middle" title={container.name}>
-                      <span className="truncate block font-mono text-zinc-100 font-semibold max-w-[200px]">
+                    <td className="py-2.5 px-3 font-medium text-zinc-100 text-xs sm:text-[13px] truncate whitespace-nowrap align-middle" title={container.name}>
+                      <span className="truncate block font-mono text-zinc-100 font-semibold max-w-[180px] sm:max-w-[220px]">
                         {container.name || '-'}
                       </span>
                     </td>
 
                     {/* 3. Image with repository & version badge */}
-                    <td className="py-2.5 px-2.5 align-middle truncate whitespace-nowrap">
-                      <TagBadge tag={container.image} maxWidth="max-w-[130px] sm:max-w-[170px]" />
+                    <td className="py-2.5 px-3 align-middle truncate whitespace-nowrap">
+                      <TagBadge tag={container.image} maxWidth="max-w-[140px] sm:max-w-[180px]" />
                     </td>
 
                     {/* 4. Status */}
-                    <td className="py-2.5 px-2.5 whitespace-nowrap align-middle">
+                    <td className="py-2.5 px-3 whitespace-nowrap align-middle w-36">
                       <StatusBadge category={category} label={container.status} size="sm" />
                     </td>
 
-                    {/* 5. Actions: Unified group with min-w-140px and safe padding */}
-                    <td className="py-2.5 pl-2 pr-3 text-right whitespace-nowrap align-middle">
-                      <div className="inline-flex items-center gap-1.5 justify-end shrink-0">
+                    {/* 5. Actions: Unified group in flex container with safe right padding */}
+                    <td className="py-2.5 pl-3 pr-4 text-right whitespace-nowrap align-middle w-44">
+                      <div className="flex items-center justify-end gap-1.5 shrink-0">
                         {/* Start / Stop Button */}
                         {isUp ? (
                           <button
