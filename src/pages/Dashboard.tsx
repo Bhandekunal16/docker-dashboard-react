@@ -110,16 +110,16 @@ export const Dashboard: React.FC = () => {
         )}
       </div>
 
-      {/* Middle Row: Status Distribution & Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
-        <div className="lg:col-span-2">
+      {/* Middle Row: Status Distribution & Quick Actions - content-driven balanced grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)] gap-4 sm:gap-6 items-start">
+        <div className="min-w-0">
           {isLoading ? (
             <TableSkeleton rows={3} columns={3} />
           ) : (
             <StatusOverview containers={containers} images={images} />
           )}
         </div>
-        <div className="lg:col-span-1">
+        <div className="min-w-0">
           <QuickActions />
         </div>
       </div>
