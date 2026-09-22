@@ -54,14 +54,14 @@ export const RecentContainers: React.FC<{ containers: Container[]; isLoading?: b
 
   return (
     <Card className="h-auto">
-      {/* Compact Header */}
-      <div className="flex items-center justify-between gap-3 pb-3 sm:pb-3.5 border-b border-zinc-800/80 mb-3 sm:mb-4">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-3 pb-3 border-b border-zinc-800/60 mb-3.5">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
-            <Box className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+          <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
+            <Box className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm sm:text-base font-semibold text-zinc-100 leading-snug truncate">
+            <h3 className="text-sm sm:text-[15px] font-semibold text-zinc-100 leading-snug truncate">
               Recent Containers
             </h3>
             <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 leading-tight truncate">

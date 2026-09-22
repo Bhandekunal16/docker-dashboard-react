@@ -48,13 +48,13 @@ export const QuickActions: React.FC = () => {
 
   return (
     <Card className="h-auto">
-      {/* Compact Header */}
-      <div className="flex items-center gap-2.5 sm:gap-3 pb-3 sm:pb-3.5 border-b border-zinc-800/80 mb-3 sm:mb-4">
-        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
-          <Zap className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+      {/* Header */}
+      <div className="flex items-center gap-2.5 sm:gap-3 pb-3 border-b border-zinc-800/60 mb-2">
+        <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+          <Zap className="w-4 h-4" />
         </div>
         <div className="min-w-0">
-          <h3 className="text-sm sm:text-base font-semibold text-zinc-100 leading-snug truncate">
+          <h3 className="text-sm sm:text-[15px] font-semibold text-zinc-100 leading-snug truncate">
             Quick Operations
           </h3>
           <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 leading-tight truncate">
@@ -63,36 +63,36 @@ export const QuickActions: React.FC = () => {
         </div>
       </div>
 
-      {/* Operations List: Single column on mobile (<640px), 1-col in sidebar widget on lg, 2-col on sm-md */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-2.5">
+      {/* Operations List: Compact Navigation Rows with Subtle Separators */}
+      <div className="divide-y divide-zinc-800/50 rounded-lg overflow-hidden border border-zinc-800/60 bg-zinc-950/30">
         {actions.map((action, idx) => {
           const Icon = action.icon;
           return (
             <div
               key={idx}
               onClick={action.onClick}
-              className="p-2.5 sm:p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-850/70 active:bg-zinc-800/80 transition-all cursor-pointer group flex items-center justify-between gap-2.5 sm:gap-3 select-none"
+              className="p-2.5 sm:p-3 hover:bg-zinc-800/40 active:bg-zinc-800/60 transition-colors cursor-pointer group flex items-center justify-between gap-3 select-none"
             >
-              {/* Left Fixed Icon */}
+              {/* Left Fixed Icon (30-34px) */}
               <div
-                className={`w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-lg border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${action.iconColor}`}
+                className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${action.iconColor}`}
               >
                 <Icon className="w-4 h-4" />
               </div>
 
               {/* Middle Title & Description */}
               <div className="flex-1 min-w-0">
-                <h4 className="text-xs sm:text-[13px] font-medium text-zinc-200 group-hover:text-white transition-colors leading-tight">
+                <div className="text-xs sm:text-[13px] font-medium text-zinc-200 group-hover:text-white transition-colors leading-tight">
                   {action.title}
-                </h4>
-                <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug line-clamp-2">
+                </div>
+                <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug truncate">
                   {action.description}
                 </p>
               </div>
 
               {/* Far-Right Arrow */}
               <div className="shrink-0 text-zinc-500 group-hover:text-zinc-200 group-hover:translate-x-0.5 transition-all pl-1">
-                <ChevronRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                <ChevronRight className="w-4 h-4" />
               </div>
             </div>
           );

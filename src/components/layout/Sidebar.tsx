@@ -75,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Navigation Items */}
-      <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-2.5 py-3 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -84,20 +84,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
               to={item.path}
               onClick={() => setIsMobileOpen(false)}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                `flex items-center justify-between px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors ${
                   isActive
-                    ? 'bg-blue-600/15 text-blue-400 border border-blue-500/30'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60 border border-transparent'
+                    ? 'bg-blue-600/10 text-blue-400 border border-blue-500/25'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 border border-transparent'
                 }`
               }
               title={isCollapsed ? `${item.name} (Key: ${item.shortcut})` : undefined}
             >
-              <div className="flex items-center gap-3">
-                <Icon className="w-5 h-5 shrink-0" />
+              <div className="flex items-center gap-2.5">
+                <Icon className="w-4.5 h-4.5 shrink-0" />
                 {!isCollapsed && <span>{item.name}</span>}
               </div>
               {!isCollapsed && (
-                <kbd className="hidden lg:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-950/80 text-zinc-500 border border-zinc-800">
+                <kbd className="hidden lg:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-950/60 text-zinc-500 border border-zinc-800/60">
                   {item.shortcut}
                 </kbd>
               )}
@@ -107,14 +107,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Footer Actions: Shortcuts & Host Configuration */}
-      <div className="p-3 border-t border-zinc-800 bg-zinc-900/50 space-y-2">
+      <div className="p-2.5 border-t border-zinc-800/80 bg-zinc-900/40 space-y-1.5">
         {/* Quick Shortcuts Trigger */}
         <button
           onClick={() => setIsShortcutsModalOpen(true)}
-          className="w-full flex items-center gap-2.5 p-2 rounded-lg bg-zinc-950/40 border border-zinc-800/70 text-left hover:border-zinc-700 hover:bg-zinc-950/80 transition-colors cursor-pointer text-zinc-400 hover:text-zinc-200"
+          className="w-full flex items-center gap-2 p-1.5 rounded-lg bg-zinc-950/30 border border-zinc-800/50 text-left hover:border-zinc-700 hover:bg-zinc-950/60 transition-colors cursor-pointer text-zinc-400 hover:text-zinc-200"
           title="Keyboard Shortcuts (Press ?)"
         >
-          <Keyboard className="w-4 h-4 text-zinc-400 shrink-0" />
+          <Keyboard className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
           {!isCollapsed && (
             <div className="flex-1 flex items-center justify-between text-xs">
               <span>Shortcuts</span>
@@ -128,13 +128,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* API Endpoint Indicator */}
         <button
           onClick={() => setIsApiConfigModalOpen(true)}
-          className="w-full flex items-center gap-2.5 p-2 rounded-lg bg-zinc-950/60 border border-zinc-800 text-left hover:border-zinc-700 transition-colors cursor-pointer"
+          className="w-full flex items-center gap-2 p-1.5 rounded-lg bg-zinc-950/40 border border-zinc-800/60 text-left hover:border-zinc-700 transition-colors cursor-pointer"
           title="Configure API Base URL"
         >
-          <Server className="w-4 h-4 text-blue-400 shrink-0" />
+          <Server className="w-3.5 h-3.5 text-blue-400 shrink-0" />
           {!isCollapsed && (
             <div className="min-w-0 flex-1">
-              <div className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider">
+              <div className="text-[10px] font-medium text-zinc-400">
                 API Endpoint
               </div>
               <div className="text-xs font-mono text-zinc-300 truncate">
