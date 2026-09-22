@@ -109,20 +109,20 @@ export const ContainerList: React.FC<ContainerListProps> = ({
       ) : (
         <>
           {/* Desktop Table View */}
-          <div className="hidden md:block overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/60 shadow-xs">
+          <div className="hidden md:block overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70 shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-sans">
-                <thead className="text-[11px] uppercase tracking-wider text-zinc-400 border-b border-zinc-800 bg-zinc-950/70">
+                <thead className="text-[11px] uppercase tracking-wider text-zinc-400 border-b border-zinc-800 bg-zinc-950/80 select-none">
                   <tr>
-                    <th className="py-3 px-4 font-semibold">Container ID</th>
-                    <th className="py-3 px-4 font-semibold">Name</th>
-                    <th className="py-3 px-4 font-semibold">Image</th>
-                    <th className="py-3 px-4 font-semibold">Status</th>
-                    <th className="py-3 px-4 font-semibold">Ports</th>
-                    <th className="py-3 px-4 font-semibold text-right">Actions</th>
+                    <th className="py-2.5 px-3.5 font-semibold w-28">Container ID</th>
+                    <th className="py-2.5 px-3.5 font-semibold">Name</th>
+                    <th className="py-2.5 px-3.5 font-semibold">Image</th>
+                    <th className="py-2.5 px-3.5 font-semibold w-36">Status</th>
+                    <th className="py-2.5 px-3.5 font-semibold">Ports</th>
+                    <th className="py-2.5 px-3.5 font-semibold text-right w-36">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-800/60 font-mono">
+                <tbody className="divide-y divide-zinc-800/40">
                   {filteredContainers.map((container) => (
                     <ContainerTableRow
                       key={container.container_id}

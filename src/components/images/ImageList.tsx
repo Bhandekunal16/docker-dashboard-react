@@ -142,30 +142,30 @@ export const ImageList: React.FC<ImageListProps> = ({ images, onRefresh, isLoadi
       ) : (
         <>
           {/* Desktop Table */}
-          <div className="hidden md:block overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/60 shadow-xs">
+          <div className="hidden md:block overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70 shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-sans">
-                <thead className="text-[11px] uppercase tracking-wider text-zinc-400 border-b border-zinc-800 bg-zinc-950/70">
+                <thead className="text-[11px] uppercase tracking-wider text-zinc-400 border-b border-zinc-800 bg-zinc-950/80 select-none">
                   <tr>
-                    <th className="py-3 px-4 w-10 text-center">
+                    <th className="py-2.5 px-3 w-10 text-center">
                       <input
                         type="checkbox"
                         checked={allSelected}
                         onChange={handleSelectAll}
-                        className="w-4 h-4 rounded bg-zinc-950 border-zinc-700 text-blue-600 focus:ring-blue-500/50 cursor-pointer"
+                        className="w-3.5 h-3.5 rounded bg-zinc-950 border-zinc-700 text-blue-600 focus:ring-blue-500/50 cursor-pointer"
                         aria-label="Select all images"
                       />
                     </th>
-                    <th className="py-3 px-4 font-semibold">Repository / Tag</th>
-                    <th className="py-3 px-4 font-semibold">Image ID</th>
-                    <th className="py-3 px-4 font-semibold">Size</th>
-                    <th className="py-3 px-4 font-semibold">Containers</th>
-                    <th className="py-3 px-4 font-semibold">Created</th>
-                    <th className="py-3 px-4 font-semibold">Digest</th>
-                    <th className="py-3 px-4 font-semibold text-right">Actions</th>
+                    <th className="py-2.5 px-3.5 font-semibold">Repository / Tag</th>
+                    <th className="py-2.5 px-3.5 font-semibold w-28">Image ID</th>
+                    <th className="py-2.5 px-3.5 font-semibold">Size</th>
+                    <th className="py-2.5 px-3.5 font-semibold">Containers</th>
+                    <th className="py-2.5 px-3.5 font-semibold">Created</th>
+                    <th className="py-2.5 px-3.5 font-semibold">Digest</th>
+                    <th className="py-2.5 px-3.5 font-semibold text-right w-24">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-800/60 font-mono">
+                <tbody className="divide-y divide-zinc-800/40">
                   {filteredImages.map((image) => (
                     <ImageTableRow
                       key={image.ID}

@@ -12,43 +12,71 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   category,
   label,
   className = '',
-  size = 'md',
+  size = 'sm',
 }) => {
   const normalized = category.toLowerCase();
 
-  let styles = 'bg-zinc-800/80 text-zinc-300 border-zinc-700/60';
+  let styles = 'bg-zinc-800/50 text-zinc-400 border-zinc-700/50';
   let dotColor = 'bg-zinc-400';
 
   if (normalized === 'running' || normalized.startsWith('up')) {
-    styles = 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60 shadow-xs shadow-emerald-950/50';
-    dotColor = 'bg-emerald-400 animate-pulse';
+    styles = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25';
+    dotColor = 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.6)]';
   } else if (normalized === 'stopped' || normalized.startsWith('exited') || normalized === 'dead') {
-    styles = 'bg-zinc-900/80 text-zinc-400 border-zinc-800';
+    styles = 'bg-zinc-850/70 text-zinc-400 border-zinc-750';
     dotColor = 'bg-zinc-500';
   } else if (normalized === 'restarting') {
-    styles = 'bg-sky-950/60 text-sky-300 border-sky-800/60';
+    styles = 'bg-sky-500/10 text-sky-400 border-sky-500/25';
     dotColor = 'bg-sky-400 animate-spin';
   } else if (normalized === 'paused') {
-    styles = 'bg-amber-950/60 text-amber-300 border-amber-800/60';
+    styles = 'bg-amber-500/10 text-amber-400 border-amber-500/25';
     dotColor = 'bg-amber-400';
   }
 
-  const sizeStyles = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-xs';
+  const sizeStyles = size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs';
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-mono font-medium rounded-md border ${sizeStyles} ${styles} ${className}`}
+      className={`inline-flex items-center gap-1.5 font-sans font-medium rounded-full border whitespace-nowrap transition-colors ${sizeStyles} ${styles} ${className}`}
+      title={label || category}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
-      <span className="truncate max-w-[200px]">{label || category}</span>
+      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+      <span className="truncate max-w-[170px]">{label || category}</span>
     </span>
   );
 };
 
-export const TagBadge: React.FC<{ tag: string; className?: string }> = ({ tag, className = '' }) => {
+export const TagBadge: React.FC<{ tag: string; className?: string; maxWidth?: string }> = ({
+  tag,
+  className = '',
+  maxWidth = 'max-w-[190px]',
+}) => {
+  // Check if there's a repository and tag split
+  const lastColonIndex = tag.lastIndexOf(':');
+  const hasTag = lastColonIndex > 0 && !tag.slice(lastColonIndex).includes('/');
+
+  if (hasTag) {
+    const repo = tag.slice(0, lastColonIndex);
+    const version = tag.slice(lastColonIndex + 1);
+
+    return (
+      <div
+        className={`inline-flex items-center gap-1 font-mono text-[11px] ${className}`}
+        title={tag}
+      >
+        <span className={`text-zinc-200 truncate ${maxWidth}`} title={repo}>
+          {repo}
+        </span>
+        <span className="text-[10px] text-zinc-400 bg-zinc-800/80 px-1 py-0.2 rounded border border-zinc-700/60 shrink-0">
+          :{version}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-blue-950/50 text-blue-300 border border-blue-800/50 ${className}`}
+      className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-mono bg-zinc-900 text-zinc-200 border border-zinc-800 truncate ${maxWidth} ${className}`}
       title={tag}
     >
       {tag}
@@ -56,9 +84,12 @@ export const TagBadge: React.FC<{ tag: string; className?: string }> = ({ tag, c
   );
 };
 
-export const PortBadge: React.FC<{ port: string }> = ({ port }) => {
+export const PortBadge: React.FC<{ port: string; className?: string }> = ({ port, className = '' }) => {
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-zinc-900 text-zinc-300 border border-zinc-800">
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-mono font-medium bg-zinc-950/90 text-cyan-300/90 border border-zinc-800 whitespace-nowrap hover:border-zinc-700 transition-colors ${className}`}
+      title={port}
+    >
       {port}
     </span>
   );
