@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card } from '../common/Card';
-import { Activity, CheckCircle2, Layers } from 'lucide-react';
+import { Activity, CheckCircle2, Layers, HardDrive } from 'lucide-react';
 import { Container } from '../../types/container';
 import { DockerImage } from '../../types/image';
-import { parseContainerStatus } from '../../utils/formatters';
+import { parseContainerStatus, formatBytes } from '../../utils/formatters';
 import { ResourceTrendsChart } from './ResourceTrendsChart';
 import { DiskUsage } from '../../api/hostResources';
 
@@ -47,7 +47,7 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
             Host Resources Overview
           </h3>
           <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 leading-tight truncate">
-            Real-time CPU and memory telemetry, lifecycle distribution, and cached Docker images
+            Real-time CPU and memory telemetry, lifecycle distribution, and host resource utilization
           </p>
         </div>
       </div>
@@ -113,51 +113,107 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
           </div>
         </div>
 
-        {/* 4. Resource Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-0.5">
-          {/* Active Workloads */}
-          <div className="p-2.5 sm:p-3 rounded-lg bg-zinc-950/40 border border-zinc-800/60 flex items-center justify-between gap-3 select-none">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-4 h-4" />
-              </div>
+        {/* 4. Polished Workload & Host Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-1">
+          {/* Card 1: Active Workloads */}
+          <div className="p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60 flex flex-col justify-between gap-2.5 hover:border-zinc-700/70 transition-all duration-150 group select-none">
+            <div className="flex items-start justify-between gap-2 min-w-0">
               <div className="min-w-0">
                 <div className="text-xs sm:text-[13px] font-medium text-zinc-200 truncate leading-tight">
                   Active Workloads
                 </div>
                 <div className="text-[11px] text-zinc-400 truncate mt-0.5 leading-tight">
-                  Currently serving traffic
+                  Serving container instances
                 </div>
               </div>
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div className="text-base sm:text-lg font-bold font-mono text-emerald-400 shrink-0 pl-2">
-              {runningContainers}
+
+            <div className="flex items-baseline justify-between gap-2 pt-1 border-t border-zinc-800/40">
+              <div className="text-xl sm:text-2xl font-bold font-mono text-zinc-100 group-hover:text-emerald-400 transition-colors">
+                {runningContainers}
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>{totalContainers > 0 ? `${Math.round(runningPct)}% active` : '0 tasks'}</span>
+              </div>
             </div>
           </div>
 
-          {/* Images In Use */}
-          <div className="p-2.5 sm:p-3 rounded-lg bg-zinc-950/40 border border-zinc-800/60 flex items-center justify-between gap-3 select-none">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center shrink-0">
-                <Layers className="w-4 h-4" />
-              </div>
+          {/* Card 2: Image Utilization */}
+          <div className="p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60 flex flex-col justify-between gap-2.5 hover:border-zinc-700/70 transition-all duration-150 group select-none">
+            <div className="flex items-start justify-between gap-2 min-w-0">
               <div className="min-w-0">
                 <div className="text-xs sm:text-[13px] font-medium text-zinc-200 truncate leading-tight">
-                  Images In Use
+                  Image Utilization
                 </div>
                 <div className="text-[11px] text-zinc-400 truncate mt-0.5 leading-tight">
-                  Referenced by containers
+                  Referenced vs cached images
                 </div>
               </div>
-              <div className="p-2.5 sm:p-3 rounded-lg bg-zinc-950/40 border border-zinc-800/60 flex items-center justify-between gap-3 select-none sm:col-span-2">
-                <div className="text-xs sm:text-[13px] font-medium text-zinc-200">Host Disk Usage</div>
-                <div className="text-base sm:text-lg font-bold font-mono text-amber-400">
-                  {hostResources ? `${hostResources.disk.usagePercent}%` : '—'}
-                </div>
+              <div className="w-7 h-7 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center shrink-0">
+                <Layers className="w-3.5 h-3.5" />
               </div>
             </div>
-            <div className="text-base sm:text-lg font-bold font-mono text-purple-400 shrink-0 pl-2">
-              {imagesWithContainers} <span className="text-[11px] text-zinc-500 font-normal">/ {totalImageCount}</span>
+
+            <div className="flex items-baseline justify-between gap-2 pt-1 border-t border-zinc-800/40">
+              <div className="text-xl sm:text-2xl font-bold font-mono text-zinc-100 group-hover:text-purple-400 transition-colors">
+                {imagesWithContainers}{' '}
+                <span className="text-xs sm:text-sm text-zinc-500 font-normal font-mono">
+                  / {totalImageCount}
+                </span>
+              </div>
+              <div className="text-[11px] font-mono text-purple-400/90 shrink-0">
+                {totalImageCount > 0
+                  ? `${Math.round((imagesWithContainers / totalImageCount) * 100)}% active`
+                  : '0 cached'}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Host Disk Usage */}
+          <div className="p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/60 flex flex-col justify-between gap-2.5 hover:border-zinc-700/70 transition-all duration-150 group select-none">
+            <div className="flex items-start justify-between gap-2 min-w-0">
+              <div className="min-w-0">
+                <div className="text-xs sm:text-[13px] font-medium text-zinc-200 truncate leading-tight">
+                  Host Disk Usage
+                </div>
+                <div className="text-[11px] text-zinc-400 truncate mt-0.5 leading-tight">
+                  {hostResources?.disk.mount ? `Mount: ${hostResources.disk.mount}` : 'Storage allocation'}
+                </div>
+              </div>
+              <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+                <HardDrive className="w-3.5 h-3.5" />
+              </div>
+            </div>
+
+            <div className="flex items-baseline justify-between gap-2 pt-1 border-t border-zinc-800/40">
+              <div className="text-xl sm:text-2xl font-bold font-mono text-zinc-100 group-hover:text-amber-400 transition-colors">
+                {hostResources ? `${hostResources.disk.usagePercent}%` : '—'}
+              </div>
+              {hostResources ? (
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="w-12 h-1.5 bg-zinc-800/90 rounded-full overflow-hidden hidden xs:block">
+                    <div
+                      className={`h-full transition-all duration-300 ${
+                        hostResources.disk.usagePercent >= 80
+                          ? 'bg-rose-500'
+                          : hostResources.disk.usagePercent >= 60
+                          ? 'bg-amber-500'
+                          : 'bg-emerald-500'
+                      }`}
+                      style={{ width: `${Math.min(100, hostResources.disk.usagePercent)}%` }}
+                    />
+                  </div>
+                  <span className="text-[11px] font-mono text-zinc-400">
+                    {formatBytes(hostResources.disk.usedBytes)}
+                  </span>
+                </div>
+              ) : (
+                <span className="text-[11px] font-mono text-zinc-500">Standby</span>
+              )}
             </div>
           </div>
         </div>
@@ -165,3 +221,4 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
     </Card>
   );
 };
+
