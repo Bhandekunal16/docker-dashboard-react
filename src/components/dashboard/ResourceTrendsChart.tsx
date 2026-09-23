@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as d3 from 'd3';
-import { Radio } from 'lucide-react';
+import { Radio, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 export interface ResourceDataPoint {
@@ -13,13 +13,15 @@ interface ResourceTrendsChartProps {
   runningContainersCount: number;
 }
 
+const THRESHOLD_LIMIT = 80;
+
 export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
   runningContainersCount,
 }) => {
   const { resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 160 });
+  const [dimensions, setDimensions] = useState({ width: 0, height: 165 });
   const [hoveredPoint, setHoveredPoint] = useState<ResourceDataPoint | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -84,7 +86,7 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       if (!entries || entries.length === 0) return;
       const { width } = entries[0].contentRect;
       if (width > 0) {
-        setDimensions({ width, height: 160 });
+        setDimensions({ width, height: 165 });
       }
     });
 
@@ -96,6 +98,11 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
   const currentCpu = data.length > 0 ? data[data.length - 1].cpu : 0;
   const currentMem = data.length > 0 ? data[data.length - 1].memory : 0;
 
+  // Threshold status
+  const isCpuExceeded = currentCpu >= THRESHOLD_LIMIT;
+  const isMemExceeded = currentMem >= THRESHOLD_LIMIT;
+  const isAnyExceeded = isCpuExceeded || isMemExceeded;
+
   // D3 Rendering
   useEffect(() => {
     if (!svgRef.current || dimensions.width <= 0 || data.length === 0) return;
@@ -103,7 +110,7 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const margin = { top: 12, right: 12, bottom: 24, left: 34 };
+    const margin = { top: 14, right: 14, bottom: 24, left: 34 };
     const innerWidth = Math.max(10, dimensions.width - margin.left - margin.right);
     const innerHeight = Math.max(10, dimensions.height - margin.top - margin.bottom);
 
@@ -116,7 +123,6 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
     // X and Y Scales
     const xExtent = d3.extent(data, (d) => d.timestamp) as [Date, Date];
     const xScale = d3.scaleTime().domain(xExtent).range([0, innerWidth]);
-
     const yScale = d3.scaleLinear().domain([0, 100]).range([innerHeight, 0]);
 
     // Color definitions based on theme
@@ -125,8 +131,10 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
     const gridLineColor = isLight ? '#e2e8f0' : 'rgba(39, 39, 42, 0.6)';
     const axisTextColor = isLight ? '#64748b' : '#71717a';
     const axisDomainColor = isLight ? '#cbd5e1' : 'rgba(39, 39, 42, 0.8)';
+    const thresholdLineColor = isLight ? '#e11d48' : '#f43f5e';
+    const thresholdZoneFill = isLight ? 'rgba(244, 63, 94, 0.07)' : 'rgba(244, 63, 94, 0.12)';
 
-    // Define Gradients
+    // Define Gradients & Defs
     const defs = svg.append('defs');
 
     // CPU Area Gradient
@@ -169,6 +177,16 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       .attr('stop-color', memColor)
       .attr('stop-opacity', 0.0);
 
+    // Threshold Danger Zone Rect (80% to 100%)
+    const thresholdY = yScale(THRESHOLD_LIMIT);
+    g.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', innerWidth)
+      .attr('height', thresholdY)
+      .attr('fill', thresholdZoneFill)
+      .attr('rx', 2);
+
     // Grid lines (horizontal)
     const yTicks = [0, 25, 50, 75, 100];
     g.append('g')
@@ -184,6 +202,45 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       .attr('stroke', gridLineColor)
       .attr('stroke-dasharray', '3 3')
       .attr('stroke-width', 1);
+
+    // Threshold Alert Line (80%)
+    g.append('line')
+      .attr('x1', 0)
+      .attr('x2', innerWidth)
+      .attr('y1', thresholdY)
+      .attr('y2', thresholdY)
+      .attr('stroke', thresholdLineColor)
+      .attr('stroke-dasharray', '4 3')
+      .attr('stroke-width', 1.5)
+      .attr('opacity', 0.85);
+
+    // Threshold Label tag
+    const thresholdLabelGroup = g
+      .append('g')
+      .attr('transform', `translate(${innerWidth - 72}, ${Math.max(10, thresholdY - 4)})`);
+
+    thresholdLabelGroup
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', -9)
+      .attr('width', 70)
+      .attr('height', 13)
+      .attr('rx', 3)
+      .attr('fill', isLight ? '#ffe4e6' : 'rgba(159, 18, 57, 0.6)')
+      .attr('stroke', thresholdLineColor)
+      .attr('stroke-width', 0.75);
+
+    thresholdLabelGroup
+      .append('text')
+      .attr('x', 35)
+      .attr('y', 0)
+      .attr('text-anchor', 'middle')
+      .attr('fill', thresholdLineColor)
+      .attr('font-size', '8.5px')
+      .attr('font-family', 'monospace')
+      .attr('font-weight', '600')
+      .attr('class', 'select-none')
+      .text('80% ALERT CAP');
 
     // X Axis
     const xAxis = d3
@@ -207,7 +264,7 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
     // Y Axis
     const yAxis = d3
       .axisLeft(yScale)
-      .tickValues([0, 50, 100])
+      .tickValues([0, 50, 80, 100])
       .tickFormat((d) => `${d}%`)
       .tickSize(0)
       .tickPadding(6);
@@ -216,7 +273,8 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
     yAxisGroup.select('.domain').remove();
     yAxisGroup
       .selectAll('text')
-      .attr('fill', axisTextColor)
+      .attr('fill', (d) => (d === 80 ? thresholdLineColor : axisTextColor))
+      .attr('font-weight', (d) => (d === 80 ? '700' : '400'))
       .attr('class', 'text-[10px] font-mono select-none');
 
     // Area Generators
@@ -277,6 +335,32 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       .attr('stroke-linecap', 'round')
       .attr('d', cpuLine);
 
+    // Threshold Spike Highlight Points on curves (Points > 80%)
+    const highPoints = data.filter((d) => d.cpu >= THRESHOLD_LIMIT || d.memory >= THRESHOLD_LIMIT);
+    if (highPoints.length > 0) {
+      highPoints.forEach((pt) => {
+        const xPos = xScale(pt.timestamp);
+        if (pt.cpu >= THRESHOLD_LIMIT) {
+          g.append('circle')
+            .attr('cx', xPos)
+            .attr('cy', yScale(pt.cpu))
+            .attr('r', 3)
+            .attr('fill', '#f43f5e')
+            .attr('stroke', '#ffffff')
+            .attr('stroke-width', 1.2);
+        }
+        if (pt.memory >= THRESHOLD_LIMIT) {
+          g.append('circle')
+            .attr('cx', xPos)
+            .attr('cy', yScale(pt.memory))
+            .attr('r', 3)
+            .attr('fill', '#f43f5e')
+            .attr('stroke', '#ffffff')
+            .attr('stroke-width', 1.2);
+        }
+      });
+    }
+
     // Interactive Overlay for Tooltip Tracking
     const bisectDate = d3.bisector<ResourceDataPoint, Date>((d) => d.timestamp).left;
 
@@ -321,7 +405,7 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
 
   return (
     <div className="pt-2">
-      {/* Chart Top Bar: Title & Real-time stats */}
+      {/* Chart Top Bar: Title, Threshold Alert & Real-time stats */}
       <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-2">
           <span className="text-[11px] font-mono font-medium text-zinc-300">
@@ -331,22 +415,85 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
             <Radio className="w-2.5 h-2.5 animate-pulse" />
             <span>30m Live</span>
           </span>
+
+          {/* Dynamic 80% Threshold Alert Badge */}
+          {isAnyExceeded ? (
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-rose-500/15 text-rose-500 border border-rose-500/30 animate-pulse">
+              <AlertTriangle className="w-2.5 h-2.5 text-rose-500" />
+              <span>
+                {isCpuExceeded && isMemExceeded
+                  ? 'CRITICAL: CPU & MEM > 80%'
+                  : isCpuExceeded
+                  ? 'HIGH CPU > 80%'
+                  : 'HIGH MEM > 80%'}
+              </span>
+            </span>
+          ) : (
+            <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono text-zinc-400 bg-zinc-800/40 border border-zinc-700/50">
+              <ShieldAlert className="w-2.5 h-2.5 text-zinc-400" />
+              <span>Cap: 80%</span>
+            </span>
+          )}
         </div>
 
-        {/* Legend & Current metrics */}
+        {/* Legend & Current metrics with threshold warning styling */}
         <div className="flex items-center gap-3 text-[11px] font-mono">
           {/* CPU indicator */}
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-cyan-400" />
-            <span className="text-zinc-400">CPU:</span>
-            <span className="text-cyan-400 font-semibold">{hoveredPoint ? hoveredPoint.cpu : currentCpu}%</span>
+          <div
+            className={`flex items-center gap-1.5 px-1.5 py-0.5 rounded transition-colors ${
+              (hoveredPoint ? hoveredPoint.cpu : currentCpu) >= THRESHOLD_LIMIT
+                ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30 font-semibold'
+                : ''
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                (hoveredPoint ? hoveredPoint.cpu : currentCpu) >= THRESHOLD_LIMIT
+                  ? 'bg-rose-500 animate-ping'
+                  : 'bg-cyan-400'
+              }`}
+            />
+            <span className={(hoveredPoint ? hoveredPoint.cpu : currentCpu) >= THRESHOLD_LIMIT ? 'text-rose-500' : 'text-zinc-400'}>
+              CPU:
+            </span>
+            <span
+              className={`font-semibold ${
+                (hoveredPoint ? hoveredPoint.cpu : currentCpu) >= THRESHOLD_LIMIT
+                  ? 'text-rose-500'
+                  : 'text-cyan-400'
+              }`}
+            >
+              {hoveredPoint ? hoveredPoint.cpu : currentCpu}%
+            </span>
           </div>
 
           {/* Memory indicator */}
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-purple-400" />
-            <span className="text-zinc-400">Mem:</span>
-            <span className="text-purple-400 font-semibold">{hoveredPoint ? hoveredPoint.memory : currentMem}%</span>
+          <div
+            className={`flex items-center gap-1.5 px-1.5 py-0.5 rounded transition-colors ${
+              (hoveredPoint ? hoveredPoint.memory : currentMem) >= THRESHOLD_LIMIT
+                ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30 font-semibold'
+                : ''
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                (hoveredPoint ? hoveredPoint.memory : currentMem) >= THRESHOLD_LIMIT
+                  ? 'bg-rose-500 animate-ping'
+                  : 'bg-purple-400'
+              }`}
+            />
+            <span className={(hoveredPoint ? hoveredPoint.memory : currentMem) >= THRESHOLD_LIMIT ? 'text-rose-500' : 'text-zinc-400'}>
+              Mem:
+            </span>
+            <span
+              className={`font-semibold ${
+                (hoveredPoint ? hoveredPoint.memory : currentMem) >= THRESHOLD_LIMIT
+                  ? 'text-rose-500'
+                  : 'text-purple-400'
+              }`}
+            >
+              {hoveredPoint ? hoveredPoint.memory : currentMem}%
+            </span>
           </div>
         </div>
       </div>
@@ -354,25 +501,51 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       {/* D3 Canvas Container */}
       <div
         ref={containerRef}
-        className="relative w-full rounded-lg bg-zinc-950/40 border border-zinc-800/60 p-1.5 overflow-hidden select-none"
+        className={`relative w-full rounded-lg border p-1.5 overflow-hidden select-none transition-colors ${
+          isAnyExceeded
+            ? 'bg-rose-950/10 border-rose-500/40'
+            : 'bg-zinc-950/40 border-zinc-800/60'
+        }`}
       >
         <svg ref={svgRef} className="w-full overflow-visible block" />
 
-        {/* Hover Crosshair / Tooltip Box */}
+        {/* Hover Crosshair / Tooltip Box with Threshold Warnings */}
         {hoveredPoint && hoverPos && (
           <div
-            className="absolute pointer-events-none z-10 -translate-x-1/2 -translate-y-full bg-zinc-900/95 border border-zinc-700/80 rounded-md px-2 py-1 shadow-lg backdrop-blur-xs text-[10px] font-mono text-zinc-200 transition-all duration-75"
+            className={`absolute pointer-events-none z-10 -translate-x-1/2 -translate-y-full rounded-md px-2.5 py-1.5 shadow-lg backdrop-blur-xs text-[10px] font-mono transition-all duration-75 ${
+              hoveredPoint.cpu >= THRESHOLD_LIMIT || hoveredPoint.memory >= THRESHOLD_LIMIT
+                ? 'bg-zinc-900/98 border border-rose-500/60 text-zinc-100 shadow-rose-950/30'
+                : 'bg-zinc-900/95 border border-zinc-700/80 text-zinc-200'
+            }`}
             style={{
               left: `${hoverPos.x}px`,
-              top: `${Math.max(28, hoverPos.y - 6)}px`,
+              top: `${Math.max(30, hoverPos.y - 8)}px`,
             }}
           >
-            <div className="text-zinc-400 border-b border-zinc-800 pb-0.5 mb-1 text-center font-semibold">
-              {formattedHoverTime}
+            <div className="flex items-center justify-between gap-2 border-b border-zinc-800 pb-1 mb-1 font-semibold">
+              <span className="text-zinc-400">{formattedHoverTime}</span>
+              {(hoveredPoint.cpu >= THRESHOLD_LIMIT || hoveredPoint.memory >= THRESHOLD_LIMIT) && (
+                <span className="inline-flex items-center gap-0.5 text-rose-500 text-[9px] font-bold">
+                  <AlertTriangle className="w-2.5 h-2.5" />
+                  &gt;80% ALERT
+                </span>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-cyan-400 font-medium">CPU: {hoveredPoint.cpu}%</span>
-              <span className="text-purple-400 font-medium">MEM: {hoveredPoint.memory}%</span>
+            <div className="flex items-center gap-2.5">
+              <span
+                className={`font-medium ${
+                  hoveredPoint.cpu >= THRESHOLD_LIMIT ? 'text-rose-500 font-bold underline' : 'text-cyan-400'
+                }`}
+              >
+                CPU: {hoveredPoint.cpu}%
+              </span>
+              <span
+                className={`font-medium ${
+                  hoveredPoint.memory >= THRESHOLD_LIMIT ? 'text-rose-500 font-bold underline' : 'text-purple-400'
+                }`}
+              >
+                MEM: {hoveredPoint.memory}%
+              </span>
             </div>
           </div>
         )}
