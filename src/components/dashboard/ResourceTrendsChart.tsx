@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as d3 from 'd3';
-import { Cpu, HardDrive, Radio } from 'lucide-react';
+import { Radio } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 export interface ResourceDataPoint {
   timestamp: Date;
@@ -15,11 +16,14 @@ interface ResourceTrendsChartProps {
 export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
   runningContainersCount,
 }) => {
+  const { resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 160 });
   const [hoveredPoint, setHoveredPoint] = useState<ResourceDataPoint | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
+
+  const isLight = resolvedTheme === 'light';
 
   // Generate initial 30-minute historical data (1 point per minute = 30 points)
   const [data, setData] = useState<ResourceDataPoint[]>(() => {
@@ -115,6 +119,13 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
 
     const yScale = d3.scaleLinear().domain([0, 100]).range([innerHeight, 0]);
 
+    // Color definitions based on theme
+    const cpuColor = isLight ? '#0284c7' : '#06b6d4';
+    const memColor = isLight ? '#7c3aed' : '#a855f7';
+    const gridLineColor = isLight ? '#e2e8f0' : 'rgba(39, 39, 42, 0.6)';
+    const axisTextColor = isLight ? '#64748b' : '#71717a';
+    const axisDomainColor = isLight ? '#cbd5e1' : 'rgba(39, 39, 42, 0.8)';
+
     // Define Gradients
     const defs = svg.append('defs');
 
@@ -127,8 +138,16 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       .attr('x2', '0%')
       .attr('y2', '100%');
 
-    cpuGradient.append('stop').attr('offset', '0%').attr('stop-color', '#06b6d4').attr('stop-opacity', 0.28);
-    cpuGradient.append('stop').attr('offset', '100%').attr('stop-color', '#06b6d4').attr('stop-opacity', 0.0);
+    cpuGradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', cpuColor)
+      .attr('stop-opacity', isLight ? 0.22 : 0.28);
+    cpuGradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', cpuColor)
+      .attr('stop-opacity', 0.0);
 
     // Memory Area Gradient
     const memGradient = defs
@@ -139,8 +158,16 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       .attr('x2', '0%')
       .attr('y2', '100%');
 
-    memGradient.append('stop').attr('offset', '0%').attr('stop-color', '#a855f7').attr('stop-opacity', 0.22);
-    memGradient.append('stop').attr('offset', '100%').attr('stop-color', '#a855f7').attr('stop-opacity', 0.0);
+    memGradient
+      .append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', memColor)
+      .attr('stop-opacity', isLight ? 0.18 : 0.22);
+    memGradient
+      .append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', memColor)
+      .attr('stop-opacity', 0.0);
 
     // Grid lines (horizontal)
     const yTicks = [0, 25, 50, 75, 100];
@@ -154,8 +181,7 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       .attr('x2', innerWidth)
       .attr('y1', (d) => yScale(d))
       .attr('y2', (d) => yScale(d))
-      .attr('stroke', 'currentColor')
-      .attr('class', 'text-zinc-800/60')
+      .attr('stroke', gridLineColor)
       .attr('stroke-dasharray', '3 3')
       .attr('stroke-width', 1);
 
@@ -172,8 +198,11 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       .attr('transform', `translate(0, ${innerHeight})`)
       .call(xAxis);
 
-    xAxisGroup.select('.domain').attr('stroke', 'currentColor').attr('class', 'text-zinc-800/80');
-    xAxisGroup.selectAll('text').attr('class', 'fill-zinc-500 text-[10px] font-mono select-none');
+    xAxisGroup.select('.domain').attr('stroke', axisDomainColor);
+    xAxisGroup
+      .selectAll('text')
+      .attr('fill', axisTextColor)
+      .attr('class', 'text-[10px] font-mono select-none');
 
     // Y Axis
     const yAxis = d3
@@ -185,7 +214,10 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
 
     const yAxisGroup = g.append('g').call(yAxis);
     yAxisGroup.select('.domain').remove();
-    yAxisGroup.selectAll('text').attr('class', 'fill-zinc-500 text-[10px] font-mono select-none');
+    yAxisGroup
+      .selectAll('text')
+      .attr('fill', axisTextColor)
+      .attr('class', 'text-[10px] font-mono select-none');
 
     // Area Generators
     const cpuArea = d3
@@ -230,7 +262,7 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
     g.append('path')
       .datum(data)
       .attr('fill', 'none')
-      .attr('stroke', '#a855f7')
+      .attr('stroke', memColor)
       .attr('stroke-width', 2)
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
@@ -239,7 +271,7 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
     g.append('path')
       .datum(data)
       .attr('fill', 'none')
-      .attr('stroke', '#06b6d4')
+      .attr('stroke', cpuColor)
       .attr('stroke-width', 2)
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
@@ -280,7 +312,7 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
       setHoveredPoint(null);
       setHoverPos(null);
     });
-  }, [data, dimensions]);
+  }, [data, dimensions, isLight]);
 
   const formattedHoverTime = useMemo(() => {
     if (!hoveredPoint) return '';
@@ -339,8 +371,8 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
               {formattedHoverTime}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-cyan-400">CPU: {hoveredPoint.cpu}%</span>
-              <span className="text-purple-400">MEM: {hoveredPoint.memory}%</span>
+              <span className="text-cyan-400 font-medium">CPU: {hoveredPoint.cpu}%</span>
+              <span className="text-purple-400 font-medium">MEM: {hoveredPoint.memory}%</span>
             </div>
           </div>
         )}
