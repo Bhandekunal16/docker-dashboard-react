@@ -10,13 +10,15 @@ export interface ResourceDataPoint {
 }
 
 interface ResourceTrendsChartProps {
-  runningContainersCount: number;
+  cpuUsage?: number;
+  memoryUsage?: number;
 }
 
 const THRESHOLD_LIMIT = 80;
 
 export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
-  runningContainersCount,
+  cpuUsage,
+  memoryUsage,
 }) => {
   const { resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -27,56 +29,18 @@ export const ResourceTrendsChart: React.FC<ResourceTrendsChartProps> = ({
 
   const isLight = resolvedTheme === 'light';
 
-  // Generate initial 30-minute historical data (1 point per minute = 30 points)
-  const [data, setData] = useState<ResourceDataPoint[]>(() => {
-    const now = Date.now();
-    const points: ResourceDataPoint[] = [];
-    const baseCpu = Math.min(85, Math.max(8, 12 + runningContainersCount * 7.5));
-    const baseMem = Math.min(90, Math.max(18, 26 + runningContainersCount * 8.2));
+  const [data, setData] = useState<ResourceDataPoint[]>([]);
 
-    for (let i = 30; i >= 0; i--) {
-      const time = new Date(now - i * 60 * 1000);
-      // Create organic wave fluctuations
-      const timeOffset = i * 0.4;
-      const noiseCpu = Math.sin(timeOffset) * 6 + Math.cos(timeOffset * 1.7) * 4 + (Math.random() * 4 - 2);
-      const noiseMem = Math.sin(timeOffset * 0.5) * 4 + Math.cos(timeOffset * 1.2) * 2 + (Math.random() * 2 - 1);
-
-      points.push({
-        timestamp: time,
-        cpu: Math.max(2, Math.min(99, Math.round((baseCpu + noiseCpu) * 10) / 10)),
-        memory: Math.max(5, Math.min(99, Math.round((baseMem + noiseMem) * 10) / 10)),
-      });
-    }
-    return points;
-  });
-
-  // Real-time updates: add new tick every 4 seconds and slide window
+  // Add each backend sample and retain a 30-minute window.
   useEffect(() => {
-    const interval = setInterval(() => {
-      setData((prev) => {
-        const now = new Date();
-        const baseCpu = Math.min(88, Math.max(8, 14 + runningContainersCount * 7.2));
-        const baseMem = Math.min(92, Math.max(18, 28 + runningContainersCount * 8.0));
-
-        const last = prev[prev.length - 1];
-        const lastCpu = last ? last.cpu : baseCpu;
-        const lastMem = last ? last.memory : baseMem;
-
-        // Smooth delta with target tendency
-        const deltaCpu = (baseCpu - lastCpu) * 0.15 + (Math.random() * 6 - 3);
-        const deltaMem = (baseMem - lastMem) * 0.08 + (Math.random() * 3 - 1.5);
-
-        const newCpu = Math.max(3, Math.min(98, Math.round((lastCpu + deltaCpu) * 10) / 10));
-        const newMem = Math.max(6, Math.min(98, Math.round((lastMem + deltaMem) * 10) / 10));
-
-        const cutoff = new Date(now.getTime() - 30 * 60 * 1000);
-        const filtered = prev.filter((p) => p.timestamp >= cutoff);
-        return [...filtered, { timestamp: now, cpu: newCpu, memory: newMem }];
-      });
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [runningContainersCount]);
+    if (cpuUsage === undefined || memoryUsage === undefined) return;
+    const now = new Date();
+    const cutoff = new Date(now.getTime() - 30 * 60 * 1000);
+    setData((prev) => [
+      ...prev.filter((point) => point.timestamp >= cutoff),
+      { timestamp: now, cpu: cpuUsage, memory: memoryUsage },
+    ]);
+  }, [cpuUsage, memoryUsage]);
 
   // Track container width via ResizeObserver
   useEffect(() => {

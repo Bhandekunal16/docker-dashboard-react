@@ -11,6 +11,7 @@ import { ErrorState } from '../components/common/ErrorState';
 import { parseContainerStatus } from '../utils/formatters';
 import { useNavigate } from 'react-router-dom';
 import { parseApiErrorMessage } from '../api/client';
+import { useHostResources } from '../hooks/useHostResources';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export const Dashboard: React.FC = () => {
     refetch: refetchImages,
     isFetching: isImagesFetching,
   } = useImages();
+  const { data: hostResources } = useHostResources();
 
   const isLoading = isContainersLoading || isImagesLoading;
   const isFetching = isContainersFetching || isImagesFetching;
@@ -116,7 +118,11 @@ export const Dashboard: React.FC = () => {
           {isLoading ? (
             <TableSkeleton rows={3} columns={3} />
           ) : (
-            <StatusOverview containers={containers} images={images} />
+            <StatusOverview
+              containers={containers}
+              images={images}
+              hostResources={hostResources}
+            />
           )}
         </div>
         <div className="min-w-0">

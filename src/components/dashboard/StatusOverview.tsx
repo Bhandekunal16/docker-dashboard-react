@@ -5,13 +5,19 @@ import { Container } from '../../types/container';
 import { DockerImage } from '../../types/image';
 import { parseContainerStatus } from '../../utils/formatters';
 import { ResourceTrendsChart } from './ResourceTrendsChart';
+import { DiskUsage } from '../../api/hostResources';
 
 interface StatusOverviewProps {
   containers: Container[];
   images: DockerImage[];
+  hostResources?: {
+    cpu: { usagePercent: number };
+    memory: { usagePercent: number };
+    disk: DiskUsage;
+  };
 }
 
-export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, images }) => {
+export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, images, hostResources }) => {
   const totalContainers = containers.length;
   const runningContainers = containers.filter(
     (c) => parseContainerStatus(c.status).category === 'running'
@@ -48,7 +54,10 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
 
       <div className="space-y-3.5">
         {/* 2. D3 Real-Time Resource Trends Chart (30m CPU & Memory) */}
-        <ResourceTrendsChart runningContainersCount={runningContainers} />
+        <ResourceTrendsChart
+          cpuUsage={hostResources?.cpu.usagePercent}
+          memoryUsage={hostResources?.memory.usagePercent}
+        />
 
         {/* 3. Lifecycle Distribution */}
         <div className="pt-1">
@@ -138,6 +147,12 @@ export const StatusOverview: React.FC<StatusOverviewProps> = ({ containers, imag
                 </div>
                 <div className="text-[11px] text-zinc-400 truncate mt-0.5 leading-tight">
                   Referenced by containers
+                </div>
+              </div>
+              <div className="p-2.5 sm:p-3 rounded-lg bg-zinc-950/40 border border-zinc-800/60 flex items-center justify-between gap-3 select-none sm:col-span-2">
+                <div className="text-xs sm:text-[13px] font-medium text-zinc-200">Host Disk Usage</div>
+                <div className="text-base sm:text-lg font-bold font-mono text-amber-400">
+                  {hostResources ? `${hostResources.disk.usagePercent}%` : '—'}
                 </div>
               </div>
             </div>
